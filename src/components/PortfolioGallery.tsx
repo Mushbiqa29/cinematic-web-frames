@@ -1,6 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
-import { Eye, Heart, Camera, RotateCcw, ZoomIn, ZoomOut, Move3D, Grid, Maximize2 } from 'lucide-react';
+import React, { useState, useRef, Suspense } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, useTexture, Text, Environment } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ChevronLeft, ChevronRight, Grid, Box } from 'lucide-react';
+import * as THREE from 'three';
 
 interface Photo {
   id: number;
@@ -81,69 +85,160 @@ const samplePhotos: Photo[] = [
     image: "https://images.unsplash.com/photo-1503387837-b154d5074bd2?w=800&h=600&fit=crop",
     caption: "Structural beauty"
   },
-  {
-    id: 11,
-    title: "Wedding Details",
-    category: "Wedding",
-    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop",
-    caption: "Perfect moments"
-  },
-  {
-    id: 12,
-    title: "Mountain Vista",
-    category: "Landscape",
-    image: "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop",
-    caption: "Natural grandeur"
-  }
 ];
+
+// Individual Book Component
+function Book({ photo, position, isActive, onClick }: { 
+  photo: Photo; 
+  position: [number, number, number]; 
+  isActive: boolean;
+  onClick: () => void;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const texture = useTexture(photo.image);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+      if (isActive) {
+        meshRef.current.scale.setScalar(1.1);
+      } else {
+        meshRef.current.scale.setScalar(1);
+      }
+    }
+  });
+
+  return (
+    <group position={position} onClick={onClick}>
+      {/* Book Spine */}
+      <mesh ref={meshRef} position={[0, 0, 0]}>
+        <boxGeometry args={[0.3, 2, 1.5]} />
+        <meshStandardMaterial color="#8B4513" />
+      </mesh>
+      
+      {/* Book Cover */}
+      <mesh position={[0.15, 0, 0]}>
+        <boxGeometry args={[0.05, 1.8, 1.3]} />
+        <meshStandardMaterial map={texture} />
+      </mesh>
+      
+      {/* Book Pages */}
+      <mesh position={[-0.15, 0, 0]}>
+        <boxGeometry args={[0.05, 1.7, 1.2]} />
+        <meshStandardMaterial color="#f5f5dc" />
+      </mesh>
+      
+      {/* Title Text */}
+      <Text
+        position={[0.2, -0.7, 0]}
+        rotation={[0, 0, 0]}
+        fontSize={0.1}
+        color="gold"
+        maxWidth={1.2}
+        textAlign="center"
+        font="/fonts/Playfair_Display/PlayfairDisplay-Bold.ttf"
+      >
+        {photo.title}
+      </Text>
+    </group>
+  );
+}
+
+// Book Slider Scene Component
+function BookSlider({ photos, currentIndex, onBookClick }: { 
+  photos: Photo[]; 
+  currentIndex: number;
+  onBookClick: (index: number) => void;
+}) {
+  const groupRef = useRef<THREE.Group>(null);
+  
+  useFrame((state) => {
+    if (groupRef.current) {
+      // Smooth rotation animation
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      {/* Bookshelf */}
+      <mesh position={[0, -1.2, 0]}>
+        <boxGeometry args={[12, 0.2, 3]} />
+        <meshStandardMaterial color="#654321" />
+      </mesh>
+      
+      {/* Books arranged in a curved pattern */}
+      {photos.map((photo, index) => {
+        const angle = (index - currentIndex) * 0.6;
+        const radius = 4;
+        const x = Math.sin(angle) * radius;
+        const z = Math.cos(angle) * radius;
+        const y = 0;
+        
+        return (
+          <Book
+            key={photo.id}
+            photo={photo}
+            position={[x, y, z]}
+            isActive={index === currentIndex}
+            onClick={() => onBookClick(index)}
+          />
+        );
+      })}
+      
+      {/* Ambient lighting */}
+      <ambientLight intensity={0.4} />
+      <directionalLight position={[10, 10, 5]} intensity={1} />
+      <pointLight position={[0, 2, 0]} intensity={0.5} />
+    </group>
+  );
+}
+
+// Camera Controller
+function CameraController() {
+  const { camera, gl } = useThree();
+  
+  useFrame(() => {
+    camera.position.lerp(new THREE.Vector3(0, 2, 8), 0.02);
+    camera.lookAt(0, 0, 0);
+  });
+  
+  return <OrbitControls enableZoom={true} enablePan={false} maxPolarAngle={Math.PI / 2} />;
+}
 
 export const PortfolioGallery = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [viewMode, setViewMode] = useState<'gallery' | 'grid'>('gallery');
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
-  const [rotationY, setRotationY] = useState(0);
-  const [rotationX, setRotationX] = useState(-10);
-  const [zoom, setZoom] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [viewMode, setViewMode] = useState<'3d' | 'grid'>('3d');
   
   const categories = ['All', 'Portrait', 'Wedding', 'Architecture', 'Landscape', 'Fashion', 'Street'];
-  const galleryRef = useRef<HTMLDivElement>(null);
-
+  
   const filteredPhotos = selectedCategory === 'All' 
     ? samplePhotos 
     : samplePhotos.filter(photo => photo.category === selectedCategory);
 
-  // Auto-rotate gallery
-  useEffect(() => {
-    if (viewMode === 'gallery') {
-      const interval = setInterval(() => {
-        setRotationY(prev => prev + 0.2); // Slower rotation
-      }, 100);
-      return () => clearInterval(interval);
-    }
-  }, [viewMode]);
-
-  const handlePhotoClick = (photo: Photo) => {
-    setSelectedPhoto(photo);
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + filteredPhotos.length) % filteredPhotos.length);
   };
 
-  const resetView = () => {
-    setRotationY(0);
-    setRotationX(-10);
-    setZoom(1);
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % filteredPhotos.length);
+  };
+
+  const handleBookClick = (index: number) => {
+    setCurrentIndex(index);
   };
 
   return (
-    <section id="portfolio" className="py-20 px-6 min-h-screen" style={{
-      background: 'linear-gradient(135deg, hsl(260, 50%, 15%) 0%, hsl(260, 85%, 6%) 100%)'
-    }}>
+    <section id="portfolio" className="py-20 px-6 min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
+        {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-5xl font-bold mb-6 luxframe-brand">
-            3D PORTFOLIO GALLERY
+          <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+            PORTFOLIO LIBRARY
           </h2>
           <p className="text-xl text-white/80 max-w-2xl mx-auto">
-            Explore our work in an immersive 3D gallery experience
+            Browse our work in an interactive 3D book collection
           </p>
         </div>
 
@@ -154,11 +249,14 @@ export const PortfolioGallery = () => {
             {categories.map((category) => (
               <button
                 key={category}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setCurrentIndex(0);
+                }}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   selectedCategory === category
-                    ? 'luxframe-cta text-white'
-                    : 'border border-white/30 text-white/80 hover:border-primary hover:text-primary'
+                    ? 'bg-amber-500 text-white'
+                    : 'border border-white/30 text-white/80 hover:border-amber-400 hover:text-amber-400'
                 }`}
               >
                 {category}
@@ -166,369 +264,108 @@ export const PortfolioGallery = () => {
             ))}
           </div>
 
-          {/* View Controls */}
+          {/* View Mode Toggle */}
           <div className="flex items-center space-x-2">
             <Button
-              onClick={() => setViewMode(viewMode === 'gallery' ? 'grid' : 'gallery')}
+              onClick={() => setViewMode(viewMode === '3d' ? 'grid' : '3d')}
               variant="outline"
               size="sm"
               className="border-white/20 text-white hover:bg-white/10"
             >
-              {viewMode === 'gallery' ? <Grid className="w-4 h-4" /> : <Move3D className="w-4 h-4" />}
+              {viewMode === '3d' ? <Grid className="w-4 h-4" /> : <Box className="w-4 h-4" />}
             </Button>
-            {viewMode === 'gallery' && (
-              <>
-                <Button
-                  onClick={() => setZoom(prev => Math.max(0.5, prev - 0.1))}
-                  variant="outline"
-                  size="sm"
-                  className="border-white/20 text-white hover:bg-white/10"
-                >
-                  <ZoomOut className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={() => setZoom(prev => Math.min(2, prev + 0.1))}
-                  variant="outline"
-                  size="sm"
-                  className="border-white/20 text-white hover:bg-white/10"
-                >
-                  <ZoomIn className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={resetView}
-                  variant="outline"
-                  size="sm"
-                  className="border-white/20 text-white hover:bg-white/10"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </Button>
-              </>
-            )}
           </div>
         </div>
 
-        {viewMode === 'gallery' ? (
-          /* 3D Gallery View */
-          <div className="relative h-[700px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-900 to-black">
-            {/* 3D Gallery Container */}
-            <div 
-              ref={galleryRef}
-              className="gallery-3d w-full h-full flex items-center justify-center"
-              style={{
-                perspective: '1200px',
-                perspectiveOrigin: '50% 50%'
-              }}
-            >
-              <div
-                className="gallery-room relative"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  transform: `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(${zoom})`,
-                  transition: 'transform 0.1s ease-out',
-                  width: '800px',
-                  height: '400px',
-                  margin: 'auto',
-                  position: 'relative',
-                  left: '50%',
-                  top: '50%',
-                  marginLeft: '-400px',
-                  marginTop: '-200px'
-                }}
+        {viewMode === '3d' ? (
+          /* 3D Book Slider */
+          <div className="relative">
+            <div className="h-[600px] bg-gradient-to-b from-amber-900/20 to-slate-900 rounded-2xl overflow-hidden">
+              <Canvas camera={{ position: [0, 2, 8], fov: 75 }}>
+                <Suspense fallback={null}>
+                  <Environment preset="studio" />
+                  <BookSlider 
+                    photos={filteredPhotos} 
+                    currentIndex={currentIndex}
+                    onBookClick={handleBookClick}
+                  />
+                  <CameraController />
+                </Suspense>
+              </Canvas>
+            </div>
+            
+            {/* Navigation Controls */}
+            <div className="absolute inset-y-0 left-4 flex items-center">
+              <Button
+                onClick={handlePrevious}
+                variant="outline"
+                size="lg"
+                className="bg-black/50 border-white/20 text-white hover:bg-black/70"
               >
-                {/* Floor */}
-                <div
-                  className="gallery-floor"
-                  style={{
-                    position: 'absolute',
-                    width: '800px',
-                    height: '800px',
-                    left: '-400px',
-                    top: '200px',
-                    background: 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)',
-                    backgroundSize: '30px 30px',
-                    backgroundPosition: '0 0, 0 15px, 15px -15px, -15px 0px',
-                    transform: 'rotateX(90deg)',
-                    opacity: 0.4
-                  }}
-                />
-
-                {/* Ceiling */}
-                <div
-                  className="gallery-ceiling"
-                  style={{
-                    position: 'absolute',
-                    width: '800px',
-                    height: '800px',
-                    left: '-400px',
-                    top: '-400px',
-                    background: 'linear-gradient(135deg, #2a2a2a, #1a1a1a)',
-                    transform: 'rotateX(-90deg)',
-                    opacity: 0.5
-                  }}
-                />
-
-                {/* Front Wall */}
-                <div
-                  className="gallery-wall front-wall"
-                  style={{
-                    position: 'absolute',
-                    width: '800px',
-                    height: '400px',
-                    left: '-400px',
-                    top: '0px',
-                    background: 'linear-gradient(135deg, #2a2a2a, #1a1a1a)',
-                    transform: 'translateZ(400px)',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                  }}
-                >
-                  {filteredPhotos.slice(0, 3).map((photo, index) => (
-                    <div
-                      key={photo.id}
-                      className="gallery-frame"
-                      onClick={() => handlePhotoClick(photo)}
-                      style={{
-                        position: 'absolute',
-                        width: '180px',
-                        height: '120px',
-                        left: `${130 + index * 200}px`,
-                        top: '140px',
-                        cursor: 'pointer',
-                        transition: 'transform 0.3s ease',
-                        transform: 'translateZ(10px)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateZ(20px) scale(1.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateZ(10px) scale(1)';
-                      }}
-                    >
-                      <img
-                        src={photo.image}
-                        alt={photo.title}
-                        className="w-full h-full object-cover rounded border-4 border-white shadow-2xl"
-                      />
-                      <div className="absolute -bottom-8 left-0 right-0 text-center">
-                        <div className="bg-black/80 text-white text-xs px-2 py-1 rounded">
-                          {photo.title}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Left Wall */}
-                <div
-                  className="gallery-wall left-wall"
-                  style={{
-                    position: 'absolute',
-                    width: '800px',
-                    height: '400px',
-                    left: '-400px',
-                    top: '0px',
-                    background: 'linear-gradient(135deg, #252525, #151515)',
-                    transform: 'rotateY(-90deg) translateZ(400px)',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                  }}
-                >
-                  {filteredPhotos.slice(3, 6).map((photo, index) => (
-                    <div
-                      key={photo.id}
-                      className="gallery-frame"
-                      onClick={() => handlePhotoClick(photo)}
-                      style={{
-                        position: 'absolute',
-                        width: '180px',
-                        height: '120px',
-                        left: `${130 + index * 200}px`,
-                        top: '140px',
-                        cursor: 'pointer',
-                        transition: 'transform 0.3s ease',
-                        transform: 'translateZ(10px)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateZ(20px) scale(1.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateZ(10px) scale(1)';
-                      }}
-                    >
-                      <img
-                        src={photo.image}
-                        alt={photo.title}
-                        className="w-full h-full object-cover rounded border-4 border-white shadow-2xl"
-                      />
-                      <div className="absolute -bottom-8 left-0 right-0 text-center">
-                        <div className="bg-black/80 text-white text-xs px-2 py-1 rounded">
-                          {photo.title}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Right Wall */}
-                <div
-                  className="gallery-wall right-wall"
-                  style={{
-                    position: 'absolute',
-                    width: '800px',
-                    height: '400px',
-                    left: '-400px',
-                    top: '0px',
-                    background: 'linear-gradient(135deg, #252525, #151515)',
-                    transform: 'rotateY(90deg) translateZ(400px)',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                  }}
-                >
-                  {filteredPhotos.slice(6, 9).map((photo, index) => (
-                    <div
-                      key={photo.id}
-                      className="gallery-frame"
-                      onClick={() => handlePhotoClick(photo)}
-                      style={{
-                        position: 'absolute',
-                        width: '180px',
-                        height: '120px',
-                        left: `${130 + index * 200}px`,
-                        top: '140px',
-                        cursor: 'pointer',
-                        transition: 'transform 0.3s ease',
-                        transform: 'translateZ(10px)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateZ(20px) scale(1.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateZ(10px) scale(1)';
-                      }}
-                    >
-                      <img
-                        src={photo.image}
-                        alt={photo.title}
-                        className="w-full h-full object-cover rounded border-4 border-white shadow-2xl"
-                      />
-                      <div className="absolute -bottom-8 left-0 right-0 text-center">
-                        <div className="bg-black/80 text-white text-xs px-2 py-1 rounded">
-                          {photo.title}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Back Wall */}
-                <div
-                  className="gallery-wall back-wall"
-                  style={{
-                    position: 'absolute',
-                    width: '800px',
-                    height: '400px',
-                    left: '-400px',
-                    top: '0px',
-                    background: 'linear-gradient(135deg, #2a2a2a, #1a1a1a)',
-                    transform: 'rotateY(180deg) translateZ(400px)',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                  }}
-                >
-                  {filteredPhotos.slice(9, 12).map((photo, index) => (
-                    <div
-                      key={photo.id}
-                      className="gallery-frame"
-                      onClick={() => handlePhotoClick(photo)}
-                      style={{
-                        position: 'absolute',
-                        width: '180px',
-                        height: '120px',
-                        left: `${130 + index * 200}px`,
-                        top: '140px',
-                        cursor: 'pointer',
-                        transition: 'transform 0.3s ease',
-                        transform: 'translateZ(10px)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateZ(20px) scale(1.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateZ(10px) scale(1)';
-                      }}
-                    >
-                      <img
-                        src={photo.image}
-                        alt={photo.title}
-                        className="w-full h-full object-cover rounded border-4 border-white shadow-2xl"
-                      />
-                      <div className="absolute -bottom-8 left-0 right-0 text-center">
-                        <div className="bg-black/80 text-white text-xs px-2 py-1 rounded">
-                          {photo.title}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ChevronLeft className="w-6 h-6" />
+              </Button>
+            </div>
+            
+            <div className="absolute inset-y-0 right-4 flex items-center">
+              <Button
+                onClick={handleNext}
+                variant="outline"
+                size="lg"
+                className="bg-black/50 border-white/20 text-white hover:bg-black/70"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </Button>
+            </div>
+            
+            {/* Current Photo Info */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+              <div className="bg-black/70 backdrop-blur-sm px-6 py-3 rounded-full text-center">
+                <h3 className="text-white font-semibold text-lg">
+                  {filteredPhotos[currentIndex]?.title}
+                </h3>
+                <p className="text-white/70 text-sm">
+                  {filteredPhotos[currentIndex]?.caption}
+                </p>
+                <Badge variant="secondary" className="mt-2">
+                  {filteredPhotos[currentIndex]?.category}
+                </Badge>
               </div>
             </div>
-
-            {/* Gallery Instructions */}
-            <div className="absolute bottom-4 left-4 right-4 text-center">
-              <p className="text-white/60 text-sm">
-                🖱️ Drag to rotate • 🔍 Use zoom controls • 📱 Click photos to view details
-              </p>
+            
+            {/* Progress Indicators */}
+            <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {filteredPhotos.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === currentIndex 
+                      ? 'bg-amber-400 scale-110' 
+                      : 'bg-white/30 hover:bg-white/50'
+                  }`}
+                />
+              ))}
             </div>
           </div>
         ) : (
-          /* Traditional Grid View */
+          /* Grid View Fallback */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredPhotos.map((photo) => (
-              <div
-                key={photo.id}
-                className="group cursor-pointer"
-                onClick={() => handlePhotoClick(photo)}
-              >
-                <div className="relative overflow-hidden rounded-2xl bg-white/10 p-4">
-                  <img
-                    src={photo.image}
-                    alt={photo.title}
-                    className="w-full h-48 object-cover rounded-xl transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-2xl flex items-center justify-center">
-                    <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="text-white font-semibold">{photo.title}</h3>
-                    <p className="text-white/70 text-sm">{photo.category}</p>
+              <div key={photo.id} className="group relative overflow-hidden rounded-lg bg-white/10 backdrop-blur-sm">
+                <img
+                  src={photo.image}
+                  alt={photo.title}
+                  className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-white font-semibold text-lg mb-1">{photo.title}</h3>
+                    <p className="text-white/80 text-sm mb-2">{photo.caption}</p>
+                    <Badge variant="secondary">{photo.category}</Badge>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Photo Detail Modal */}
-        {selectedPhoto && (
-          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-            <div className="relative max-w-4xl max-h-[90vh] w-full bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden">
-              <img
-                src={selectedPhoto.image}
-                alt={selectedPhoto.title}
-                className="w-full h-96 object-cover"
-              />
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-white mb-2">{selectedPhoto.title}</h3>
-                <p className="text-white/80 mb-4">{selectedPhoto.caption}</p>
-                <span className="inline-block px-3 py-1 bg-primary rounded-full text-sm">
-                  {selectedPhoto.category}
-                </span>
-              </div>
-              <Button
-                onClick={() => setSelectedPhoto(null)}
-                variant="secondary"
-                size="sm"
-                className="absolute top-4 right-4 w-10 h-10 rounded-full"
-              >
-                ×
-              </Button>
-            </div>
           </div>
         )}
       </div>
