@@ -1,10 +1,7 @@
-import React, { useState, useRef, Suspense } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, useTexture, Text, Environment } from '@react-three/drei';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, Grid, Box } from 'lucide-react';
-import * as THREE from 'three';
 
 interface Photo {
   id: number;
@@ -87,129 +84,10 @@ const samplePhotos: Photo[] = [
   },
 ];
 
-// Individual Book Component
-function Book({ photo, position, isActive, onClick }: { 
-  photo: Photo; 
-  position: [number, number, number]; 
-  isActive: boolean;
-  onClick: () => void;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const texture = useTexture(photo.image);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
-      if (isActive) {
-        meshRef.current.scale.setScalar(1.1);
-      } else {
-        meshRef.current.scale.setScalar(1);
-      }
-    }
-  });
-
-  return (
-    <group position={position} onClick={onClick}>
-      {/* Book Spine */}
-      <mesh ref={meshRef} position={[0, 0, 0]}>
-        <boxGeometry args={[0.3, 2, 1.5]} />
-        <meshStandardMaterial color="#8B4513" />
-      </mesh>
-      
-      {/* Book Cover */}
-      <mesh position={[0.15, 0, 0]}>
-        <boxGeometry args={[0.05, 1.8, 1.3]} />
-        <meshStandardMaterial map={texture} />
-      </mesh>
-      
-      {/* Book Pages */}
-      <mesh position={[-0.15, 0, 0]}>
-        <boxGeometry args={[0.05, 1.7, 1.2]} />
-        <meshStandardMaterial color="#f5f5dc" />
-      </mesh>
-      
-      {/* Title Text */}
-      <Text
-        position={[0.2, -0.7, 0]}
-        rotation={[0, 0, 0]}
-        fontSize={0.1}
-        color="gold"
-        maxWidth={1.2}
-        textAlign="center"
-        font="/fonts/Playfair_Display/PlayfairDisplay-Bold.ttf"
-      >
-        {photo.title}
-      </Text>
-    </group>
-  );
-}
-
-// Book Slider Scene Component
-function BookSlider({ photos, currentIndex, onBookClick }: { 
-  photos: Photo[]; 
-  currentIndex: number;
-  onBookClick: (index: number) => void;
-}) {
-  const groupRef = useRef<THREE.Group>(null);
-  
-  useFrame((state) => {
-    if (groupRef.current) {
-      // Smooth rotation animation
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
-    }
-  });
-
-  return (
-    <group ref={groupRef}>
-      {/* Bookshelf */}
-      <mesh position={[0, -1.2, 0]}>
-        <boxGeometry args={[12, 0.2, 3]} />
-        <meshStandardMaterial color="#654321" />
-      </mesh>
-      
-      {/* Books arranged in a curved pattern */}
-      {photos.map((photo, index) => {
-        const angle = (index - currentIndex) * 0.6;
-        const radius = 4;
-        const x = Math.sin(angle) * radius;
-        const z = Math.cos(angle) * radius;
-        const y = 0;
-        
-        return (
-          <Book
-            key={photo.id}
-            photo={photo}
-            position={[x, y, z]}
-            isActive={index === currentIndex}
-            onClick={() => onBookClick(index)}
-          />
-        );
-      })}
-      
-      {/* Ambient lighting */}
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
-      <pointLight position={[0, 2, 0]} intensity={0.5} />
-    </group>
-  );
-}
-
-// Camera Controller
-function CameraController() {
-  const { camera, gl } = useThree();
-  
-  useFrame(() => {
-    camera.position.lerp(new THREE.Vector3(0, 2, 8), 0.02);
-    camera.lookAt(0, 0, 0);
-  });
-  
-  return <OrbitControls enableZoom={true} enablePan={false} maxPolarAngle={Math.PI / 2} />;
-}
-
 export const PortfolioGallery = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [viewMode, setViewMode] = useState<'3d' | 'grid'>('3d');
+  const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
   
   const categories = ['All', 'Portrait', 'Wedding', 'Architecture', 'Landscape', 'Fashion', 'Street'];
   
@@ -225,9 +103,15 @@ export const PortfolioGallery = () => {
     setCurrentIndex((prev) => (prev + 1) % filteredPhotos.length);
   };
 
-  const handleBookClick = (index: number) => {
-    setCurrentIndex(index);
-  };
+  // Auto-advance slider
+  useEffect(() => {
+    if (viewMode === 'slider') {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % filteredPhotos.length);
+      }, 4000);
+      return () => clearInterval(interval);
+    }
+  }, [filteredPhotos.length, viewMode]);
 
   return (
     <section id="portfolio" className="py-20 px-6 min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
@@ -238,7 +122,7 @@ export const PortfolioGallery = () => {
             PORTFOLIO LIBRARY
           </h2>
           <p className="text-xl text-white/80 max-w-2xl mx-auto">
-            Browse our work in an interactive 3D book collection
+            Browse our work in an interactive book collection
           </p>
         </div>
 
@@ -267,84 +151,160 @@ export const PortfolioGallery = () => {
           {/* View Mode Toggle */}
           <div className="flex items-center space-x-2">
             <Button
-              onClick={() => setViewMode(viewMode === '3d' ? 'grid' : '3d')}
+              onClick={() => setViewMode(viewMode === 'slider' ? 'grid' : 'slider')}
               variant="outline"
               size="sm"
               className="border-white/20 text-white hover:bg-white/10"
             >
-              {viewMode === '3d' ? <Grid className="w-4 h-4" /> : <Box className="w-4 h-4" />}
+              {viewMode === 'slider' ? <Grid className="w-4 h-4" /> : <Box className="w-4 h-4" />}
             </Button>
           </div>
         </div>
 
-        {viewMode === '3d' ? (
-          /* 3D Book Slider */
+        {viewMode === 'slider' ? (
+          /* CSS-Based Book Slider */
           <div className="relative">
-            <div className="h-[600px] bg-gradient-to-b from-amber-900/20 to-slate-900 rounded-2xl overflow-hidden">
-              <Canvas camera={{ position: [0, 2, 8], fov: 75 }}>
-                <Suspense fallback={null}>
-                  <Environment preset="studio" />
-                  <BookSlider 
-                    photos={filteredPhotos} 
-                    currentIndex={currentIndex}
-                    onBookClick={handleBookClick}
-                  />
-                  <CameraController />
-                </Suspense>
-              </Canvas>
-            </div>
-            
-            {/* Navigation Controls */}
-            <div className="absolute inset-y-0 left-4 flex items-center">
-              <Button
-                onClick={handlePrevious}
-                variant="outline"
-                size="lg"
-                className="bg-black/50 border-white/20 text-white hover:bg-black/70"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </Button>
-            </div>
-            
-            <div className="absolute inset-y-0 right-4 flex items-center">
-              <Button
-                onClick={handleNext}
-                variant="outline"
-                size="lg"
-                className="bg-black/50 border-white/20 text-white hover:bg-black/70"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </Button>
-            </div>
-            
-            {/* Current Photo Info */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-              <div className="bg-black/70 backdrop-blur-sm px-6 py-3 rounded-full text-center">
-                <h3 className="text-white font-semibold text-lg">
-                  {filteredPhotos[currentIndex]?.title}
-                </h3>
-                <p className="text-white/70 text-sm">
-                  {filteredPhotos[currentIndex]?.caption}
-                </p>
-                <Badge variant="secondary" className="mt-2">
-                  {filteredPhotos[currentIndex]?.category}
-                </Badge>
+            <div className="h-[600px] bg-gradient-to-b from-amber-900/20 to-slate-900 rounded-2xl overflow-hidden relative">
+              {/* Bookshelf Background */}
+              <div className="absolute inset-0 bg-gradient-to-b from-amber-900/30 to-slate-900">
+                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-amber-800/30 to-transparent"></div>
+                <div className="absolute bottom-4 left-0 right-0 h-4 bg-amber-900/50 rounded-full mx-8"></div>
               </div>
-            </div>
-            
-            {/* Progress Indicators */}
-            <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2">
-              {filteredPhotos.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`w-3 h-3 rounded-full transition-all ${
-                    index === currentIndex 
-                      ? 'bg-amber-400 scale-110' 
-                      : 'bg-white/30 hover:bg-white/50'
-                  }`}
-                />
-              ))}
+              
+              {/* Books Container */}
+              <div className="absolute inset-0 flex items-center justify-center" style={{ perspective: '1000px' }}>
+                <div className="relative w-full max-w-4xl h-96 flex items-center justify-center">
+                  {filteredPhotos.map((photo, index) => {
+                    const offset = index - currentIndex;
+                    const absOffset = Math.abs(offset);
+                    const isActive = index === currentIndex;
+                    
+                    let transform = '';
+                    let opacity = 1;
+                    let zIndex = 10;
+                    
+                    if (offset === 0) {
+                      transform = 'translateX(0) translateZ(50px) rotateY(0deg) scale(1.1)';
+                      zIndex = 20;
+                    } else if (offset > 0) {
+                      transform = `translateX(${offset * 120}px) translateZ(${-absOffset * 20}px) rotateY(-${Math.min(absOffset * 15, 45)}deg) scale(${Math.max(0.8, 1 - absOffset * 0.1)})`;
+                      opacity = Math.max(0.3, 1 - absOffset * 0.2);
+                      zIndex = 10 - absOffset;
+                    } else {
+                      transform = `translateX(${offset * 120}px) translateZ(${-absOffset * 20}px) rotateY(${Math.min(absOffset * 15, 45)}deg) scale(${Math.max(0.8, 1 - absOffset * 0.1)})`;
+                      opacity = Math.max(0.3, 1 - absOffset * 0.2);
+                      zIndex = 10 - absOffset;
+                    }
+                    
+                    return (
+                      <div
+                        key={photo.id}
+                        className="absolute transition-all duration-700 ease-out cursor-pointer"
+                        style={{
+                          transform,
+                          opacity,
+                          zIndex,
+                          transformStyle: 'preserve-3d'
+                        }}
+                        onClick={() => setCurrentIndex(index)}
+                      >
+                        {/* Book Structure */}
+                        <div className="relative w-48 h-64 group">
+                          {/* Book Spine */}
+                          <div className="absolute -left-6 top-0 w-6 h-64 bg-gradient-to-r from-amber-800 to-amber-700 rounded-l-lg shadow-2xl border-r border-amber-600">
+                            <div className="absolute top-4 left-1 right-1 h-8 bg-amber-600/50 rounded"></div>
+                            <div className="absolute bottom-4 left-1 right-1 h-8 bg-amber-600/50 rounded"></div>
+                          </div>
+                          
+                          {/* Book Cover */}
+                          <div className="relative w-48 h-64 bg-gradient-to-br from-amber-100 to-amber-50 rounded-r-lg shadow-2xl border border-amber-200 group-hover:shadow-amber-500/30 transition-all duration-300">
+                            {/* Cover Image */}
+                            <div className="absolute inset-2 rounded-lg overflow-hidden">
+                              <img
+                                src={photo.image}
+                                alt={photo.title}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            </div>
+                            
+                            {/* Book Title */}
+                            <div className="absolute bottom-3 left-3 right-3">
+                              <h3 className="text-white font-bold text-sm mb-1 drop-shadow-lg">
+                                {photo.title}
+                              </h3>
+                              <p className="text-white/80 text-xs drop-shadow">
+                                {photo.caption}
+                              </p>
+                            </div>
+                            
+                            {/* Active Book Glow */}
+                            {isActive && (
+                              <div className="absolute inset-0 bg-amber-400/20 rounded-r-lg animate-pulse"></div>
+                            )}
+                          </div>
+                          
+                          {/* Book Pages */}
+                          <div className="absolute -right-1 top-1 w-1 h-64 bg-gradient-to-b from-amber-50 to-amber-100 rounded-r-sm shadow-lg"></div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {/* Navigation Controls */}
+              <div className="absolute inset-y-0 left-4 flex items-center">
+                <Button
+                  onClick={handlePrevious}
+                  variant="outline"
+                  size="lg"
+                  className="bg-black/50 border-white/20 text-white hover:bg-black/70 backdrop-blur-sm"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </Button>
+              </div>
+              
+              <div className="absolute inset-y-0 right-4 flex items-center">
+                <Button
+                  onClick={handleNext}
+                  variant="outline"
+                  size="lg"
+                  className="bg-black/50 border-white/20 text-white hover:bg-black/70 backdrop-blur-sm"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </Button>
+              </div>
+              
+              {/* Current Photo Info */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                <div className="bg-black/70 backdrop-blur-sm px-6 py-3 rounded-full text-center">
+                  <h3 className="text-white font-semibold text-lg">
+                    {filteredPhotos[currentIndex]?.title}
+                  </h3>
+                  <p className="text-white/70 text-sm">
+                    {filteredPhotos[currentIndex]?.caption}
+                  </p>
+                  <Badge variant="secondary" className="mt-2">
+                    {filteredPhotos[currentIndex]?.category}
+                  </Badge>
+                </div>
+              </div>
+              
+              {/* Progress Indicators */}
+              <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {filteredPhotos.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      index === currentIndex 
+                        ? 'bg-amber-400 scale-110' 
+                        : 'bg-white/30 hover:bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         ) : (
