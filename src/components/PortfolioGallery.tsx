@@ -63,14 +63,16 @@ export const PortfolioGallery = () => {
     : samplePhotos.filter(photo => photo.category === selectedCategory);
 
   return (
-    <section id="portfolio" className="py-20 px-6 bg-film-grain">
+    <section id="portfolio" className="py-20 px-6" style={{
+      background: 'linear-gradient(135deg, hsl(260, 50%, 15%) 0%, hsl(260, 85%, 6%) 100%)'
+    }}>
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold mb-6 text-primary">
+          <h2 className="text-5xl font-bold mb-6 luxframe-brand">
             PORTFOLIO
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-white/80 max-w-2xl mx-auto">
             A curated collection of moments frozen in time, 
             each frame telling its own cinematic story.
           </p>
@@ -82,10 +84,10 @@ export const PortfolioGallery = () => {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`camera-dial px-6 py-2 text-sm font-medium transition-all ${
+              className={`px-8 py-3 rounded-full font-medium transition-all ${
                 selectedCategory === category
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-lens-chrome text-camera-black hover:bg-film-silver'
+                  ? 'luxframe-cta text-white'
+                  : 'border border-white/30 text-white/80 hover:border-primary hover:text-primary'
               }`}
             >
               {category}

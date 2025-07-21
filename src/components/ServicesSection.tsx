@@ -46,15 +46,24 @@ const services = [
 ];
 
 export const ServicesSection = () => {
+  const scrollToContact = () => {
+    const element = document.querySelector('#contact');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section id="services" className="py-20 px-6 bg-background">
+    <section id="services" className="py-20 px-6" style={{
+      background: 'linear-gradient(135deg, hsl(260, 85%, 6%) 0%, hsl(260, 50%, 15%) 100%)'
+    }}>
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold mb-6 text-primary">
+          <h2 className="text-5xl font-bold mb-6 luxframe-brand">
             SERVICES
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
             Professional photography services crafted with the precision of film and 
             the innovation of digital artistry. Every session is a collaboration to create something extraordinary.
           </p>
@@ -114,15 +123,20 @@ export const ServicesSection = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="text-center mt-16 p-8 bg-film-base text-film-silver rounded-lg film-grain">
-          <h3 className="text-3xl font-bold mb-4 text-primary">
+        <div className="text-center mt-16 p-8 rounded-lg" style={{
+          background: 'linear-gradient(135deg, hsl(260, 50%, 15%) 0%, hsl(260, 30%, 25%) 100%)'
+        }}>
+          <h3 className="text-3xl font-bold mb-4 luxframe-brand">
             Ready to Create Something Amazing?
           </h3>
-          <p className="text-lg mb-6 text-film-silver/80">
+          <p className="text-lg mb-6 text-white/80">
             Let's discuss your project and bring your vision to life.
           </p>
-          <button className="shutter-button w-auto px-8 py-4 text-lg group">
-            <Camera className="mr-3 w-6 h-6 group-hover:animate-focus-peaking" />
+          <button 
+            onClick={scrollToContact}
+            className="luxframe-cta px-8 py-4 text-lg rounded-full"
+          >
+            <Camera className="mr-3 w-6 h-6" />
             Start Your Project
           </button>
         </div>

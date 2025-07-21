@@ -8,49 +8,54 @@ All colors MUST be HSL for film-inspired palette.
 
 @layer base {
   :root {
-    /* Film Base Colors */
-    --background: 0 0% 97%;
-    --foreground: 0 0% 4%;
+    /* LuxFrame Studio Base Colors */
+    --background: 260 85% 6%;  /* Deep purple-black */
+    --foreground: 0 0% 98%;    /* Pure white */
     
-    /* Film Emulsion Colors */
-    --film-base: 0 0% 4%;
-    --film-silver: 0 0% 85%;
-    --film-grain: 30 8% 92%;
+    /* LuxFrame Brand Colors */
+    --luxframe-deep: 260 85% 6%;      /* Deep purple-black */
+    --luxframe-purple: 260 50% 15%;   /* Rich purple */
+    --luxframe-accent: 15 90% 55%;    /* Orange accent */
+    --luxframe-pink: 340 85% 55%;     /* Pink accent */
+    --luxframe-gold: 35 90% 60%;      /* Gold accent */
+    --luxframe-silver: 0 0% 90%;      /* Silver text */
+    --luxframe-white: 0 0% 98%;       /* Pure white */
+    --luxframe-border: 260 30% 25%;   /* Purple border */
     
-    /* Ektachrome Inspired */
-    --primary: 349 86% 54%;  /* Film red */
+    /* Primary Brand Gradient (Orange to Pink) */
+    --primary: 15 90% 55%;    /* Orange */
     --primary-foreground: 0 0% 98%;
-    --primary-glow: 349 86% 64%;
+    --primary-glow: 340 85% 55%;  /* Pink */
     
-    /* Kodak Gold Tones */
-    --secondary: 45 100% 51%;  /* Film amber */
-    --secondary-foreground: 0 0% 4%;
-    --secondary-warm: 35 100% 45%;
+    /* Secondary Purple Tones */
+    --secondary: 260 50% 15%;  /* Rich purple */
+    --secondary-foreground: 0 0% 98%;
+    --secondary-warm: 260 30% 25%;
     
-    /* Darkroom Chemistry */
-    --accent: 25 100% 45%;  /* Developer orange */
+    /* Accent Colors */
+    --accent: 340 85% 55%;  /* Pink accent */
     --accent-foreground: 0 0% 98%;
-    --stop-bath: 200 100% 40%;  /* Stop bath blue */
-    --fixer: 280 30% 25%;  /* Fixer purple */
+    --stop-bath: 200 100% 40%;  /* Blue accent */
+    --fixer: 35 90% 60%;  /* Gold accent */
     
     /* Card & Surface */
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 4%;
-    --popover: 0 0% 98%;
-    --popover-foreground: 0 0% 4%;
+    --card: 260 50% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 260 50% 15%;
+    --popover-foreground: 0 0% 98%;
     
-    /* Muted Film Tones */
-    --muted: 30 8% 94%;
-    --muted-foreground: 0 0% 45%;
+    /* Muted LuxFrame Tones */
+    --muted: 260 30% 25%;
+    --muted-foreground: 0 0% 70%;
     
     /* Alerts */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
     
     /* Borders & Inputs */
-    --border: 0 0% 85%;
-    --input: 0 0% 90%;
-    --ring: 349 86% 54%;
+    --border: 260 30% 25%;
+    --input: 260 30% 25%;
+    --ring: 15 90% 55%;
     
     /* Film Equipment */
     --lens-chrome: 0 0% 75%;
@@ -138,19 +143,88 @@ All colors MUST be HSL for film-inspired palette.
   }
 }
 
-/* Film-Inspired Component Styles */
+/* LuxFrame Studio Component Styles */
 @layer components {
-  /* Filmstrip Navigation */
+  /* LuxFrame Navigation */
+  .luxframe-nav {
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, hsl(var(--luxframe-deep)), hsl(var(--luxframe-purple)));
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid hsl(var(--luxframe-border));
+  }
+  
+  /* LuxFrame Hero Background */
+  .luxframe-hero {
+    background: linear-gradient(135deg, 
+      hsl(var(--luxframe-deep)) 0%,
+      hsl(var(--luxframe-purple)) 50%,
+      hsl(var(--luxframe-deep)) 100%
+    );
+  }
+  
+  /* LuxFrame Brand Text */
+  .luxframe-brand {
+    background: linear-gradient(135deg, 
+      hsl(var(--luxframe-accent)) 0%,
+      hsl(var(--luxframe-gold)) 50%,
+      hsl(var(--luxframe-pink)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px hsl(var(--luxframe-accent) / 0.3);
+  }
+  
+  /* LuxFrame CTA Button */
+  .luxframe-cta {
+    background: linear-gradient(135deg, 
+      hsl(var(--luxframe-pink)) 0%,
+      hsl(var(--accent)) 100%
+    );
+    box-shadow: 
+      0 8px 32px hsl(var(--luxframe-pink) / 0.4),
+      0 0 0 1px hsl(var(--luxframe-pink) / 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .luxframe-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 12px 40px hsl(var(--luxframe-pink) / 0.6),
+      0 0 0 1px hsl(var(--luxframe-pink) / 0.3);
+  }
+  
+  /* Polaroid Film Strips */
+  .luxframe-film-strip {
+    @apply absolute top-0 bottom-0 w-24;
+    background: linear-gradient(180deg, 
+      hsl(var(--luxframe-deep)) 0%,
+      transparent 20%,
+      transparent 80%,
+      hsl(var(--luxframe-deep)) 100%
+    );
+  }
+  
+  .luxframe-polaroid {
+    @apply relative bg-white p-3 pb-12 mb-8 shadow-xl;
+    transform: rotate(-2deg);
+    transition: all 0.3s ease;
+  }
+  
+  .luxframe-polaroid:nth-child(even) {
+    transform: rotate(2deg);
+  }
+  
+  .luxframe-polaroid:hover {
+    transform: rotate(0deg) scale(1.05);
+    box-shadow: 0 20px 40px hsl(var(--luxframe-deep) / 0.3);
+  }
+  
+  /* Filmstrip Navigation (Updated) */
   .film-strip {
-    @apply relative bg-film-base overflow-hidden;
-    background-image: 
-      repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent calc(var(--perf-spacing) - 2px),
-        hsl(var(--film-silver)) calc(var(--perf-spacing) - 2px),
-        hsl(var(--film-silver)) var(--perf-spacing)
-      );
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, hsl(var(--luxframe-deep)), hsl(var(--luxframe-purple)));
+    backdrop-filter: blur(10px);
   }
   
   .film-frame {

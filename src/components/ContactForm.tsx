@@ -26,17 +26,19 @@ export const ContactForm = () => {
   };
 
   return (
-    <section id="contact" className="py-20 px-6 bg-film-base text-film-silver">
+    <section id="contact" className="py-20 px-6" style={{
+      background: 'linear-gradient(135deg, hsl(260, 50%, 15%) 0%, hsl(260, 85%, 6%) 100%)'
+    }}>
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           
           {/* Contact Info */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-5xl font-bold mb-6 text-primary">
+              <h2 className="text-5xl font-bold mb-6 luxframe-brand">
                 GET IN TOUCH
               </h2>
-              <p className="text-xl text-film-silver/80 leading-relaxed">
+              <p className="text-xl text-white/80 leading-relaxed">
                 Ready to create something extraordinary? Let's discuss your vision 
                 and bring it to life through the lens.
               </p>
