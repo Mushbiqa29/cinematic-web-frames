@@ -3,7 +3,7 @@ import { Play, Camera } from 'lucide-react';
 
 export const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden film-grain">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden film-grain">
       {/* Aperture Background */}
       <div className="absolute inset-0 bg-gradient-radial from-transparent via-film-base/20 to-film-base/60" />
       

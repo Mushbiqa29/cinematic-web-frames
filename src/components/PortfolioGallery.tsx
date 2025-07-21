@@ -63,7 +63,7 @@ export const PortfolioGallery = () => {
     : samplePhotos.filter(photo => photo.category === selectedCategory);
 
   return (
-    <section className="py-20 px-6 bg-film-grain">
+    <section id="portfolio" className="py-20 px-6 bg-film-grain">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
