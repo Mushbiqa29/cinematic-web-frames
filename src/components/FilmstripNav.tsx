@@ -2,6 +2,7 @@ import { Camera, Image, Phone, User, Home } from 'lucide-react';
 
 const navItems = [
   { name: 'Home', icon: Home, href: '#hero' },
+  { name: 'About', icon: User, href: '#about' },
   { name: 'Portfolio', icon: Image, href: '#portfolio' },
   { name: 'Services', icon: Camera, href: '#services' },
   { name: 'Contact', icon: Phone, href: '#contact' },
