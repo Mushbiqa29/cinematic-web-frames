@@ -2,41 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Cinematic Photography Studio Design System 
+All colors MUST be HSL for film-inspired palette.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    /* Film Base Colors */
+    --background: 0 0% 97%;
+    --foreground: 0 0% 4%;
+    
+    /* Film Emulsion Colors */
+    --film-base: 0 0% 4%;
+    --film-silver: 0 0% 85%;
+    --film-grain: 30 8% 92%;
+    
+    /* Ektachrome Inspired */
+    --primary: 349 86% 54%;  /* Film red */
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 349 86% 64%;
+    
+    /* Kodak Gold Tones */
+    --secondary: 45 100% 51%;  /* Film amber */
+    --secondary-foreground: 0 0% 4%;
+    --secondary-warm: 35 100% 45%;
+    
+    /* Darkroom Chemistry */
+    --accent: 25 100% 45%;  /* Developer orange */
+    --accent-foreground: 0 0% 98%;
+    --stop-bath: 200 100% 40%;  /* Stop bath blue */
+    --fixer: 280 30% 25%;  /* Fixer purple */
+    
+    /* Card & Surface */
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 4%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 0 0% 4%;
+    
+    /* Muted Film Tones */
+    --muted: 30 8% 94%;
+    --muted-foreground: 0 0% 45%;
+    
+    /* Alerts */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Borders & Inputs */
+    --border: 0 0% 85%;
+    --input: 0 0% 90%;
+    --ring: 349 86% 54%;
+    
+    /* Film Equipment */
+    --lens-chrome: 0 0% 75%;
+    --camera-black: 0 0% 8%;
+    --lcd-green: 120 100% 25%;
+    --focus-peaking: 0 100% 50%;
+    
+    /* Measurements */
+    --radius: 0.25rem;
+    --perf-spacing: 18px;
+    
+    /* Shadows & Depth */
+    --shadow-film: 0 4px 12px -2px hsl(0 0% 0% / 0.12);
+    --shadow-lens: 0 8px 24px -4px hsl(0 0% 0% / 0.16);
+    --shadow-equipment: 0 12px 32px -6px hsl(0 0% 0% / 0.2);
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,33 +85,48 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* Darkroom Environment */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+    
+    /* Film Base Colors (Dark) */
+    --film-base: 0 0% 2%;
+    --film-silver: 0 0% 25%;
+    --film-grain: 0 0% 8%;
+    
+    /* Enhanced Film Colors for Dark */
+    --primary: 349 86% 64%;
+    --primary-foreground: 0 0% 4%;
+    --primary-glow: 349 86% 74%;
+    
+    --secondary: 45 100% 61%;
+    --secondary-foreground: 0 0% 4%;
+    --secondary-warm: 35 100% 55%;
+    
+    --accent: 25 100% 55%;
+    --accent-foreground: 0 0% 4%;
+    --stop-bath: 200 100% 50%;
+    --fixer: 280 30% 35%;
+    
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 95%;
+    
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 65%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 0 0% 15%;
+    --input: 0 0% 12%;
+    --ring: 349 86% 64%;
+    
+    --lens-chrome: 0 0% 35%;
+    --camera-black: 0 0% 2%;
+    --lcd-green: 120 100% 35%;
+    --focus-peaking: 0 100% 60%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -94,6 +138,191 @@ All colors MUST be HSL.
   }
 }
 
+/* Film-Inspired Component Styles */
+@layer components {
+  /* Filmstrip Navigation */
+  .film-strip {
+    @apply relative bg-film-base overflow-hidden;
+    background-image: 
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent calc(var(--perf-spacing) - 2px),
+        hsl(var(--film-silver)) calc(var(--perf-spacing) - 2px),
+        hsl(var(--film-silver)) var(--perf-spacing)
+      );
+  }
+  
+  .film-frame {
+    @apply relative p-4 transition-all duration-300 cursor-pointer;
+    min-width: 120px;
+  }
+  
+  .film-frame:hover {
+    @apply scale-105;
+    box-shadow: 0 0 20px hsl(var(--primary-glow) / 0.4);
+  }
+  
+  /* DSLR Shutter Button */
+  .shutter-button {
+    @apply relative w-12 h-12 rounded-full bg-camera-black border-2 border-lens-chrome;
+    @apply flex items-center justify-center transition-all duration-150;
+    @apply hover:scale-105 active:scale-95;
+    box-shadow: 
+      inset 0 -2px 4px hsl(var(--camera-black) / 0.8),
+      0 4px 8px hsl(var(--camera-black) / 0.3);
+  }
+  
+  .shutter-button::before {
+    @apply absolute inset-2 rounded-full;
+    content: '';
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    transition: transform 150ms ease;
+  }
+  
+  .shutter-button:active::before {
+    @apply scale-90;
+  }
+  
+  /* Polaroid Frame */
+  .polaroid-frame {
+    @apply relative bg-white p-4 pb-16 shadow-lg transform rotate-1 transition-all duration-300;
+    @apply hover:-rotate-0 hover:scale-105 hover:shadow-xl;
+    box-shadow: var(--shadow-film);
+  }
+  
+  .polaroid-frame::after {
+    @apply absolute bottom-4 left-4 right-4 text-center text-sm text-muted-foreground;
+    content: attr(data-caption);
+  }
+  
+  /* Camera Dial */
+  .camera-dial {
+    @apply relative w-16 h-16 rounded-full bg-lens-chrome border-4 border-camera-black;
+    @apply flex items-center justify-center cursor-pointer transition-transform duration-200;
+    background: radial-gradient(circle at 30% 30%, hsl(var(--film-silver)), hsl(var(--lens-chrome)));
+  }
+  
+  .camera-dial:hover {
+    @apply rotate-12;
+  }
+  
+  /* LCD Display Input */
+  .lcd-input {
+    @apply bg-camera-black text-lcd-green font-mono border-2 border-lens-chrome;
+    @apply px-4 py-2 text-lg tracking-wider;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 8px hsl(var(--lcd-green) / 0.6);
+  }
+  
+  .lcd-input:focus {
+    @apply outline-none ring-2 ring-focus-peaking;
+    text-shadow: 0 0 12px hsl(var(--lcd-green) / 0.8);
+  }
+  
+  /* Lens Aperture */
+  .aperture {
+    @apply relative w-24 h-24 rounded-full bg-camera-black flex items-center justify-center;
+    background: radial-gradient(circle, transparent 40%, hsl(var(--camera-black)) 42%);
+  }
+  
+  .aperture-blades {
+    @apply absolute inset-4 rounded-full transition-all duration-500;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      hsl(var(--lens-chrome)) 30deg,
+      transparent 60deg,
+      hsl(var(--lens-chrome)) 90deg,
+      transparent 120deg,
+      hsl(var(--lens-chrome)) 150deg,
+      transparent 180deg,
+      hsl(var(--lens-chrome)) 210deg,
+      transparent 240deg,
+      hsl(var(--lens-chrome)) 270deg,
+      transparent 300deg,
+      hsl(var(--lens-chrome)) 330deg,
+      transparent 360deg
+    );
+  }
+  
+  /* Film Grain Overlay */
+  .film-grain {
+    position: relative;
+  }
+  
+  .film-grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 25% 25%, transparent 1px, hsl(var(--film-grain) / 0.1) 1px),
+      radial-gradient(circle at 75% 75%, transparent 1px, hsl(var(--film-grain) / 0.1) 1px);
+    background-size: 4px 4px, 6px 6px;
+    pointer-events: none;
+  }
+}
+
+/* Cinematic Animations */
+@layer utilities {
+  @keyframes shutter-click {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes film-advance {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-120px); }
+  }
+  
+  @keyframes develop {
+    0% { 
+      filter: brightness(0) contrast(0);
+      opacity: 0;
+    }
+    50% {
+      filter: brightness(0.5) contrast(0.8);
+      opacity: 0.7;
+    }
+    100% { 
+      filter: brightness(1) contrast(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes focus-peaking {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--focus-peaking) / 0.7); }
+    50% { box-shadow: 0 0 0 4px hsl(var(--focus-peaking) / 0); }
+  }
+  
+  @keyframes aperture-open {
+    from { clip-path: circle(20% at center); }
+    to { clip-path: circle(80% at center); }
+  }
+  
+  @keyframes lens-flare {
+    0% { 
+      background-position: -100% center;
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% { 
+      background-position: 200% center;
+      opacity: 0;
+    }
+  }
+  
+  .animate-shutter { animation: shutter-click 150ms ease-in-out; }
+  .animate-film-advance { animation: film-advance 400ms cubic-bezier(0.4, 0, 0.2, 1); }
+  .animate-develop { animation: develop 800ms ease-in-out; }
+  .animate-focus-peaking { animation: focus-peaking 2s infinite; }
+  .animate-aperture { animation: aperture-open 600ms ease-out; }
+  .animate-lens-flare { animation: lens-flare 1.5s ease-in-out; }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -101,5 +330,23 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Custom scrollbar for film aesthetic */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-film-base;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-lens-chrome rounded;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-film-silver;
   }
 }
