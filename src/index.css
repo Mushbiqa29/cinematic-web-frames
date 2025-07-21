@@ -389,12 +389,22 @@ All colors MUST be HSL for film-inspired palette.
     }
   }
   
+  @keyframes slideFilm {
+    0% { 
+      transform: translateX(0); 
+    }
+    100% { 
+      transform: translateX(-1152px); 
+    }
+  }
+  
   .animate-shutter { animation: shutter-click 150ms ease-in-out; }
   .animate-film-advance { animation: film-advance 400ms cubic-bezier(0.4, 0, 0.2, 1); }
   .animate-develop { animation: develop 800ms ease-in-out; }
   .animate-focus-peaking { animation: focus-peaking 2s infinite; }
   .animate-aperture { animation: aperture-open 600ms ease-out; }
   .animate-lens-flare { animation: lens-flare 1.5s ease-in-out; }
+  .animate-slide-film { animation: slideFilm 20s linear infinite; }
 }
 
 @layer base {
