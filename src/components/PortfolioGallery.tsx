@@ -116,7 +116,7 @@ export const PortfolioGallery = () => {
   useEffect(() => {
     if (viewMode === 'gallery') {
       const interval = setInterval(() => {
-        setRotationY(prev => prev + 0.5);
+        setRotationY(prev => prev + 0.2); // Slower rotation
       }, 100);
       return () => clearInterval(interval);
     }
@@ -223,10 +223,16 @@ export const PortfolioGallery = () => {
                 className="gallery-room relative"
                 style={{
                   transformStyle: 'preserve-3d',
-                  transform: `translateZ(-400px) rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(${zoom})`,
+                  transform: `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(${zoom})`,
                   transition: 'transform 0.1s ease-out',
-                  width: '600px',
-                  height: '300px'
+                  width: '800px',
+                  height: '400px',
+                  margin: 'auto',
+                  position: 'relative',
+                  left: '50%',
+                  top: '50%',
+                  marginLeft: '-400px',
+                  marginTop: '-200px'
                 }}
               >
                 {/* Floor */}
@@ -234,10 +240,10 @@ export const PortfolioGallery = () => {
                   className="gallery-floor"
                   style={{
                     position: 'absolute',
-                    width: '600px',
-                    height: '600px',
-                    left: '-300px',
-                    top: '150px',
+                    width: '800px',
+                    height: '800px',
+                    left: '-400px',
+                    top: '200px',
                     background: 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)',
                     backgroundSize: '30px 30px',
                     backgroundPosition: '0 0, 0 15px, 15px -15px, -15px 0px',
@@ -251,10 +257,10 @@ export const PortfolioGallery = () => {
                   className="gallery-ceiling"
                   style={{
                     position: 'absolute',
-                    width: '600px',
-                    height: '600px',
-                    left: '-300px',
-                    top: '-300px',
+                    width: '800px',
+                    height: '800px',
+                    left: '-400px',
+                    top: '-400px',
                     background: 'linear-gradient(135deg, #2a2a2a, #1a1a1a)',
                     transform: 'rotateX(-90deg)',
                     opacity: 0.5
@@ -266,12 +272,12 @@ export const PortfolioGallery = () => {
                   className="gallery-wall front-wall"
                   style={{
                     position: 'absolute',
-                    width: '600px',
-                    height: '300px',
-                    left: '-300px',
+                    width: '800px',
+                    height: '400px',
+                    left: '-400px',
                     top: '0px',
                     background: 'linear-gradient(135deg, #2a2a2a, #1a1a1a)',
-                    transform: 'translateZ(300px)',
+                    transform: 'translateZ(400px)',
                     border: '1px solid rgba(255,255,255,0.1)'
                   }}
                 >
@@ -282,10 +288,10 @@ export const PortfolioGallery = () => {
                       onClick={() => handlePhotoClick(photo)}
                       style={{
                         position: 'absolute',
-                        width: '140px',
-                        height: '100px',
-                        left: `${80 + index * 160}px`,
-                        top: '100px',
+                        width: '180px',
+                        height: '120px',
+                        left: `${130 + index * 200}px`,
+                        top: '140px',
                         cursor: 'pointer',
                         transition: 'transform 0.3s ease',
                         transform: 'translateZ(10px)'
@@ -316,12 +322,12 @@ export const PortfolioGallery = () => {
                   className="gallery-wall left-wall"
                   style={{
                     position: 'absolute',
-                    width: '600px',
-                    height: '300px',
-                    left: '-300px',
+                    width: '800px',
+                    height: '400px',
+                    left: '-400px',
                     top: '0px',
                     background: 'linear-gradient(135deg, #252525, #151515)',
-                    transform: 'rotateY(-90deg) translateZ(300px)',
+                    transform: 'rotateY(-90deg) translateZ(400px)',
                     border: '1px solid rgba(255,255,255,0.1)'
                   }}
                 >
@@ -332,10 +338,10 @@ export const PortfolioGallery = () => {
                       onClick={() => handlePhotoClick(photo)}
                       style={{
                         position: 'absolute',
-                        width: '140px',
-                        height: '100px',
-                        left: `${80 + index * 160}px`,
-                        top: '100px',
+                        width: '180px',
+                        height: '120px',
+                        left: `${130 + index * 200}px`,
+                        top: '140px',
                         cursor: 'pointer',
                         transition: 'transform 0.3s ease',
                         transform: 'translateZ(10px)'
@@ -366,12 +372,12 @@ export const PortfolioGallery = () => {
                   className="gallery-wall right-wall"
                   style={{
                     position: 'absolute',
-                    width: '600px',
-                    height: '300px',
-                    left: '-300px',
+                    width: '800px',
+                    height: '400px',
+                    left: '-400px',
                     top: '0px',
                     background: 'linear-gradient(135deg, #252525, #151515)',
-                    transform: 'rotateY(90deg) translateZ(300px)',
+                    transform: 'rotateY(90deg) translateZ(400px)',
                     border: '1px solid rgba(255,255,255,0.1)'
                   }}
                 >
@@ -382,10 +388,10 @@ export const PortfolioGallery = () => {
                       onClick={() => handlePhotoClick(photo)}
                       style={{
                         position: 'absolute',
-                        width: '140px',
-                        height: '100px',
-                        left: `${80 + index * 160}px`,
-                        top: '100px',
+                        width: '180px',
+                        height: '120px',
+                        left: `${130 + index * 200}px`,
+                        top: '140px',
                         cursor: 'pointer',
                         transition: 'transform 0.3s ease',
                         transform: 'translateZ(10px)'
@@ -416,12 +422,12 @@ export const PortfolioGallery = () => {
                   className="gallery-wall back-wall"
                   style={{
                     position: 'absolute',
-                    width: '600px',
-                    height: '300px',
-                    left: '-300px',
+                    width: '800px',
+                    height: '400px',
+                    left: '-400px',
                     top: '0px',
                     background: 'linear-gradient(135deg, #2a2a2a, #1a1a1a)',
-                    transform: 'rotateY(180deg) translateZ(300px)',
+                    transform: 'rotateY(180deg) translateZ(400px)',
                     border: '1px solid rgba(255,255,255,0.1)'
                   }}
                 >
@@ -432,10 +438,10 @@ export const PortfolioGallery = () => {
                       onClick={() => handlePhotoClick(photo)}
                       style={{
                         position: 'absolute',
-                        width: '140px',
-                        height: '100px',
-                        left: `${80 + index * 160}px`,
-                        top: '100px',
+                        width: '180px',
+                        height: '120px',
+                        left: `${130 + index * 200}px`,
+                        top: '140px',
                         cursor: 'pointer',
                         transition: 'transform 0.3s ease',
                         transform: 'translateZ(10px)'
