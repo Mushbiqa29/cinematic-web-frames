@@ -8,60 +8,60 @@ All colors MUST be HSL for film-inspired palette.
 
 @layer base {
   :root {
-    /* LuxFrame Studio Base Colors */
-    --background: 260 85% 6%;  /* Deep purple-black */
+    /* Black & White Studio Base Colors */
+    --background: 0 0% 5%;     /* Pure black */
     --foreground: 0 0% 98%;    /* Pure white */
     
-    /* LuxFrame Brand Colors */
-    --luxframe-deep: 260 85% 6%;      /* Deep purple-black */
-    --luxframe-purple: 260 50% 15%;   /* Rich purple */
-    --luxframe-accent: 15 90% 55%;    /* Orange accent */
-    --luxframe-pink: 340 85% 55%;     /* Pink accent */
-    --luxframe-gold: 35 90% 60%;      /* Gold accent */
-    --luxframe-silver: 0 0% 90%;      /* Silver text */
-    --luxframe-white: 0 0% 98%;       /* Pure white */
-    --luxframe-border: 260 30% 25%;   /* Purple border */
+    /* Black & White Brand Colors */
+    --luxframe-deep: 0 0% 5%;        /* Pure black */
+    --luxframe-purple: 0 0% 15%;     /* Dark gray */
+    --luxframe-accent: 0 0% 80%;     /* Light gray accent */
+    --luxframe-pink: 0 0% 70%;       /* Medium gray accent */
+    --luxframe-gold: 0 0% 85%;       /* Light gray accent */
+    --luxframe-silver: 0 0% 90%;     /* Silver text */
+    --luxframe-white: 0 0% 98%;      /* Pure white */
+    --luxframe-border: 0 0% 25%;     /* Dark gray border */
     
-    /* Primary Brand Gradient (Orange to Pink) */
-    --primary: 15 90% 55%;    /* Orange */
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 340 85% 55%;  /* Pink */
+    /* Primary Brand (White to Light Gray) */
+    --primary: 0 0% 95%;       /* Light gray */
+    --primary-foreground: 0 0% 5%;
+    --primary-glow: 0 0% 85%;  /* Medium gray */
     
-    /* Secondary Purple Tones */
-    --secondary: 260 50% 15%;  /* Rich purple */
+    /* Secondary Gray Tones */
+    --secondary: 0 0% 15%;     /* Dark gray */
     --secondary-foreground: 0 0% 98%;
-    --secondary-warm: 260 30% 25%;
+    --secondary-warm: 0 0% 25%;
     
     /* Accent Colors */
-    --accent: 340 85% 55%;  /* Pink accent */
-    --accent-foreground: 0 0% 98%;
-    --stop-bath: 200 100% 40%;  /* Blue accent */
-    --fixer: 35 90% 60%;  /* Gold accent */
+    --accent: 0 0% 70%;        /* Medium gray accent */
+    --accent-foreground: 0 0% 5%;
+    --stop-bath: 0 0% 40%;     /* Medium gray accent */
+    --fixer: 0 0% 60%;         /* Gray accent */
     
     /* Card & Surface */
-    --card: 260 50% 15%;
+    --card: 0 0% 15%;
     --card-foreground: 0 0% 98%;
-    --popover: 260 50% 15%;
+    --popover: 0 0% 15%;
     --popover-foreground: 0 0% 98%;
     
-    /* Muted LuxFrame Tones */
-    --muted: 260 30% 25%;
+    /* Muted Gray Tones */
+    --muted: 0 0% 25%;
     --muted-foreground: 0 0% 70%;
     
     /* Alerts */
-    --destructive: 0 84% 60%;
+    --destructive: 0 0% 30%;
     --destructive-foreground: 0 0% 98%;
     
     /* Borders & Inputs */
-    --border: 260 30% 25%;
-    --input: 260 30% 25%;
-    --ring: 15 90% 55%;
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 0 0% 80%;
     
     /* Film Equipment */
     --lens-chrome: 0 0% 75%;
     --camera-black: 0 0% 8%;
-    --lcd-green: 120 100% 25%;
-    --focus-peaking: 0 100% 50%;
+    --lcd-green: 0 0% 60%;
+    --focus-peaking: 0 0% 80%;
     
     /* Measurements */
     --radius: 0.25rem;
@@ -74,19 +74,19 @@ All colors MUST be HSL for film-inspired palette.
 
     --sidebar-background: 0 0% 98%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-foreground: 0 0% 20%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary: 0 0% 10%;
 
     --sidebar-primary-foreground: 0 0% 98%;
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent: 0 0% 95%;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-accent-foreground: 0 0% 10%;
 
-    --sidebar-border: 220 13% 91%;
+    --sidebar-border: 0 0% 85%;
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 0 0% 70%;
   }
 
   .dark {
@@ -99,19 +99,19 @@ All colors MUST be HSL for film-inspired palette.
     --film-silver: 0 0% 25%;
     --film-grain: 0 0% 8%;
     
-    /* Enhanced Film Colors for Dark */
-    --primary: 349 86% 64%;
+    /* Black & White Colors for Dark */
+    --primary: 0 0% 90%;
     --primary-foreground: 0 0% 4%;
-    --primary-glow: 349 86% 74%;
+    --primary-glow: 0 0% 80%;
     
-    --secondary: 45 100% 61%;
-    --secondary-foreground: 0 0% 4%;
-    --secondary-warm: 35 100% 55%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 95%;
+    --secondary-warm: 0 0% 30%;
     
-    --accent: 25 100% 55%;
+    --accent: 0 0% 70%;
     --accent-foreground: 0 0% 4%;
-    --stop-bath: 200 100% 50%;
-    --fixer: 280 30% 35%;
+    --stop-bath: 0 0% 50%;
+    --fixer: 0 0% 35%;
     
     --card: 0 0% 6%;
     --card-foreground: 0 0% 95%;
@@ -121,25 +121,25 @@ All colors MUST be HSL for film-inspired palette.
     --muted: 0 0% 8%;
     --muted-foreground: 0 0% 65%;
     
-    --destructive: 0 84% 60%;
+    --destructive: 0 0% 25%;
     --destructive-foreground: 0 0% 98%;
     
     --border: 0 0% 15%;
     --input: 0 0% 12%;
-    --ring: 349 86% 64%;
+    --ring: 0 0% 70%;
     
     --lens-chrome: 0 0% 35%;
     --camera-black: 0 0% 2%;
-    --lcd-green: 120 100% 35%;
-    --focus-peaking: 0 100% 60%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --lcd-green: 0 0% 60%;
+    --focus-peaking: 0 0% 80%;
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 0 0% 85%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 0 0% 70%;
   }
 }
 
